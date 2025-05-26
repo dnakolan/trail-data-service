@@ -43,16 +43,19 @@ curl -X POST http://localhost:8080/trails \
     "name": "Lamar River Trail",
     "lat_start": 44.8472
     "lon_start": -109.6278
-    "difficulty": "Strenuous"
+    "difficulty": "hard"
     "length_km": 53
 }'
 ```
 
 ## List all trails
+GET /trails/{uid} - list trail by id
+```curl http://localhost:8080/trails/6f03765b-6a3d-44df-9c1f-f3341f089c23```
+
 GET /trails - list all trails
 ```curl http://localhost:8080/trails```
 
-GET /trails/nearby?lat=X&lng=Y&radius=Z - proximity search
+GET /trails/nearby?lat=X&lon=Y&radius-km=Z - proximity search
 ```curl http:///trails/nearby?lat=44.8472&lng=-109.6278&radius-km=50```
 
 # Design Considerations
