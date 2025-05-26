@@ -36,6 +36,9 @@ func main() {
 
 	router.GET("/health", healthHandler.GetHealthHandler)
 	router.POST("/trails", trailsHandler.CreateTrailHandler)
+	router.GET("/trails/:uid", trailsHandler.GetTrailsHandler)
+	router.GET("/trails", trailsHandler.ListTrailsHandler)
+	router.GET("/trails/nearby", trailsHandler.ListTrailsHandler)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", cfg.Server.Port),
