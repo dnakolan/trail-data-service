@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -54,7 +53,7 @@ func (h *TrailsHandler) GetTrailsHandler(c *gin.Context) {
 	uid := c.Param("uid")
 	trail, err := h.service.GetTrail(c.Request.Context(), uid)
 	if err != nil {
-		if errors.Is(err, errors.New("trail not found")) {
+		if err.Error() == "trail not found" {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
