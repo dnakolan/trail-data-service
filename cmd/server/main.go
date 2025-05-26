@@ -13,6 +13,8 @@ import (
 
 	"github.com/dnakolan/trail-data-service/internal/config"
 	"github.com/dnakolan/trail-data-service/internal/handlers"
+	"github.com/dnakolan/trail-data-service/internal/services"
+	"github.com/dnakolan/trail-data-service/internal/storage"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,9 +27,15 @@ func main() {
 	router := gin.Default()
 	gin.SetMode(cfg.Server.GinMode)
 
+	trailsStorage := storage.NewTrailStorage()
+
+	trailsService := services.NewTrailsService(trailsStorage)
+
 	healthHandler := handlers.NewHealthHandler()
+	trailsHandler := handlers.NewTrailsHandler(trailsService)
 
 	router.GET("/health", healthHandler.GetHealthHandler)
+	router.POST("/trails", trailsHandler.CreateTrailHandler)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", cfg.Server.Port),
