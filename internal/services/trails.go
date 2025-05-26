@@ -15,7 +15,6 @@ type TrailsService interface {
 	UpdateTrail(ctx context.Context, trail *models.Trail) error
 	DeleteTrail(ctx context.Context, uid string) error
 	GetAllTrails(ctx context.Context, filter *models.TrailFilter) ([]*models.Trail, error)
-	GetNearbyTrails(ctx context.Context, lat float64, lon float64, radiusKm float64) ([]*models.Trail, error)
 }
 
 type trailsService struct {
@@ -37,7 +36,11 @@ func (s *trailsService) CreateTrail(ctx context.Context, trail *models.Trail) er
 		RadiusKm: &radiusKm,
 	}
 
-	if duplicates, _ := s.GetAllTrails(ctx, filter); len(duplicates) > 0 {
+	duplicates, err := s.GetAllTrails(ctx, filter)
+	if err != nil {
+		return err
+	}
+	if len(duplicates) > 0 {
 		return errors.New("trail already exists")
 	}
 
@@ -58,9 +61,4 @@ func (s *trailsService) DeleteTrail(ctx context.Context, uid string) error {
 
 func (s *trailsService) GetAllTrails(ctx context.Context, filter *models.TrailFilter) ([]*models.Trail, error) {
 	return s.storage.FindAll(ctx, filter)
-}
-
-func (s *trailsService) GetNearbyTrails(ctx context.Context, lat float64, lon float64, radiusKm float64) ([]*models.Trail, error) {
-
-	return nil, errors.New("not implemented")
 }
