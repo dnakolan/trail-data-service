@@ -13,6 +13,7 @@ import (
 
 	"github.com/dnakolan/trail-data-service/internal/config"
 	"github.com/dnakolan/trail-data-service/internal/handlers"
+	"github.com/dnakolan/trail-data-service/internal/middleware"
 	"github.com/dnakolan/trail-data-service/internal/services"
 	"github.com/dnakolan/trail-data-service/internal/storage"
 	"github.com/gin-gonic/gin"
@@ -30,15 +31,19 @@ func main() {
 	trailsStorage := storage.NewTrailStorage()
 
 	trailsService := services.NewTrailsService(trailsStorage)
+	loginService := services.NewLoginService()
 
 	healthHandler := handlers.NewHealthHandler()
 	trailsHandler := handlers.NewTrailsHandler(trailsService)
+	loginHandler := handlers.NewLoginHandler(loginService)
 
+	router.POST("/login", loginHandler.LoginHandler)
 	router.GET("/health", healthHandler.GetHealthHandler)
-	router.POST("/trails", trailsHandler.CreateTrailHandler)
-	router.GET("/trails/:uid", trailsHandler.GetTrailsHandler)
-	router.GET("/trails", trailsHandler.ListTrailsHandler)
-	router.GET("/trails/nearby", trailsHandler.ListTrailsHandler)
+
+	router.POST("/trails", middleware.JwtAuthMiddleware(), trailsHandler.CreateTrailHandler)
+	router.GET("/trails/:uid", middleware.JwtAuthMiddleware(), trailsHandler.GetTrailsHandler)
+	router.GET("/trails", middleware.JwtAuthMiddleware(), trailsHandler.ListTrailsHandler)
+	router.GET("/trails/nearby", middleware.JwtAuthMiddleware(), trailsHandler.ListTrailsHandler)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", cfg.Server.Port),
