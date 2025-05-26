@@ -17,7 +17,7 @@ const (
 
 type Trail struct {
 	UID        uuid.UUID        `json:"trail_id"`
-	Name       *string          `json:"trail_name"`
+	Name       *string          `json:"name"`
 	LatStart   *float64         `json:"lat_start"`
 	LonStart   *float64         `json:"lon_start"`
 	Difficulty *TrailDifficulty `json:"difficulty"`
@@ -26,7 +26,7 @@ type Trail struct {
 }
 
 type CreateTrailRequest struct {
-	Name       *string          `json:"trail_name"`
+	Name       *string          `json:"name"`
 	LatStart   *float64         `json:"lat_start"`
 	LonStart   *float64         `json:"lon_start"`
 	Difficulty *TrailDifficulty `json:"difficulty"`
