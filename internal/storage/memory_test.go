@@ -14,26 +14,16 @@ import (
 func TestTrailStorage_Save(t *testing.T) {
 	storage := NewTrailStorage()
 	ctx := context.Background()
-	uid := uuid.New()
 	now := time.Now()
 
-	trail := &models.Trail{
-		CreateTrailRequest: models.CreateTrailRequest{
-			Name:       stringPtr("Lamar River Trail"),
-			Lat:        float64Ptr(44.8472),
-			Lon:        float64Ptr(-109.6278),
-			Difficulty: trailDifficultyPtr(models.TrailDifficulty("hard")),
-			LengthKm:   float64Ptr(53),
-		},
-		UID:       uid,
-		CreatedAt: &now,
-	}
+	trail := models.NewTrail("Lamar River Trail", 44.8472, -109.6278, models.TrailDifficultyHard, 53)
+	trail.CreatedAt = &now
 
 	err := storage.Save(ctx, trail)
 	require.NoError(t, err)
 
 	// Verify the trail was saved
-	saved, err := storage.FindById(ctx, uid.String())
+	saved, err := storage.FindById(ctx, trail.UID.String())
 	require.NoError(t, err)
 	assert.Equal(t, trail, saved)
 }
@@ -41,21 +31,11 @@ func TestTrailStorage_Save(t *testing.T) {
 func TestTrailStorage_FindById(t *testing.T) {
 	storage := NewTrailStorage()
 	ctx := context.Background()
-	uid := uuid.New()
 	notFoundUID := uuid.New()
 	now := time.Now()
 
-	trail := &models.Trail{
-		CreateTrailRequest: models.CreateTrailRequest{
-			Name:       stringPtr("Lamar River Trail"),
-			Lat:        float64Ptr(44.8472),
-			Lon:        float64Ptr(-109.6278),
-			Difficulty: trailDifficultyPtr(models.TrailDifficulty("hard")),
-			LengthKm:   float64Ptr(53),
-		},
-		UID:       uid,
-		CreatedAt: &now,
-	}
+	trail := models.NewTrail("Lamar River Trail", 44.8472, -109.6278, models.TrailDifficultyHard, 53)
+	trail.CreatedAt = &now
 
 	// Save a trail first
 	err := storage.Save(ctx, trail)
@@ -69,7 +49,7 @@ func TestTrailStorage_FindById(t *testing.T) {
 	}{
 		{
 			name:        "successful retrieval",
-			uid:         uid.String(),
+			uid:         trail.UID.String(),
 			expectError: false,
 		},
 		{
@@ -104,39 +84,14 @@ func TestTrailStorage_FindAll(t *testing.T) {
 
 	// Create test trails
 	trails := []*models.Trail{
-		{
-			CreateTrailRequest: models.CreateTrailRequest{
-				Name:       stringPtr("Lamar River Trail"),
-				Lat:        float64Ptr(44.8472),
-				Lon:        float64Ptr(-109.6278),
-				Difficulty: trailDifficultyPtr(models.TrailDifficulty("hard")),
-				LengthKm:   float64Ptr(53),
-			},
-			UID:       uuid.New(),
-			CreatedAt: &now,
-		},
-		{
-			CreateTrailRequest: models.CreateTrailRequest{
-				Name:       stringPtr("Trail of Ten Falls"),
-				Lat:        float64Ptr(43.8242),
-				Lon:        float64Ptr(-121.5654),
-				Difficulty: trailDifficultyPtr(models.TrailDifficulty("medium")),
-				LengthKm:   float64Ptr(10),
-			},
-			UID:       uuid.New(),
-			CreatedAt: &now,
-		},
-		{
-			CreateTrailRequest: models.CreateTrailRequest{
-				Name:       stringPtr("Angel's Rest"),
-				Lat:        float64Ptr(45.6789),
-				Lon:        float64Ptr(-122.3456),
-				Difficulty: trailDifficultyPtr(models.TrailDifficulty("medium")),
-				LengthKm:   float64Ptr(10),
-			},
-			UID:       uuid.New(),
-			CreatedAt: &now,
-		},
+		models.NewTrail("Lamar River Trail", 44.8472, -109.6278, models.TrailDifficultyHard, 53),
+		models.NewTrail("Trail of Ten Falls", 43.8242, -121.5654, models.TrailDifficultyMedium, 10),
+		models.NewTrail("Angel's Rest", 45.6789, -122.3456, models.TrailDifficultyMedium, 10),
+	}
+
+	// Set CreatedAt for all trails
+	for _, trail := range trails {
+		trail.CreatedAt = &now
 	}
 
 	// Save all trails
@@ -144,6 +99,8 @@ func TestTrailStorage_FindAll(t *testing.T) {
 		err := storage.Save(ctx, w)
 		require.NoError(t, err)
 	}
+
+	mediumDifficulty := models.TrailDifficultyMedium
 
 	tests := []struct {
 		name           string
@@ -162,13 +119,13 @@ func TestTrailStorage_FindAll(t *testing.T) {
 			name: "filter by difficulty",
 			filter: &models.TrailFilter{
 				CreateTrailRequest: models.CreateTrailRequest{
-					Difficulty: trailDifficultyPtr(models.TrailDifficulty("medium")),
+					Difficulty: &mediumDifficulty,
 				},
 			},
 			expectedCount: 2,
 			expectedNames: []string{"Trail of Ten Falls", "Angel's Rest"},
 			expectedFilter: func(w *models.Trail) bool {
-				return *w.Difficulty == models.TrailDifficulty("medium")
+				return *w.Difficulty == models.TrailDifficultyMedium
 			},
 		},
 		{

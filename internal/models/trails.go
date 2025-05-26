@@ -74,10 +74,6 @@ func (t *CreateTrailRequest) Validate() error {
 }
 
 func (t *TrailFilter) Validate() error {
-	if t.Name != nil && *t.Name == "" {
-		return errors.New("invalid empty name filter")
-	}
-
 	if t.Lat != nil && t.Lon != nil && t.RadiusKm != nil {
 		if *t.Lat < -90 || *t.Lat > 90 {
 			return errors.New("invalid lat filter outside of bounds -90 to 90")
@@ -93,21 +89,8 @@ func (t *TrailFilter) Validate() error {
 	} else if t.Lon != nil {
 		return errors.New("invalid missing lat filter")
 	} else if t.RadiusKm != nil {
-		return errors.New("invalid missing lat or lon filter")
+		return errors.New("invalid missing lat and lon filter")
 	}
-
-	if t.Difficulty != nil {
-		if *t.Difficulty != TrailDifficultyEasy && *t.Difficulty != TrailDifficultyMedium && *t.Difficulty != TrailDifficultyHard {
-			return errors.New("trail difficulty must be easy, medium, or hard")
-		}
-	}
-
-	if t.LengthKm != nil {
-		if *t.LengthKm < 0 {
-			return errors.New("invalid length filter must be positive")
-		}
-	}
-
 	return nil
 }
 
@@ -139,5 +122,28 @@ func IsValidTrailDifficulty(s string) bool {
 		return true
 	default:
 		return false
+	}
+}
+
+// NewTrailFromRequest creates a Trail from a CreateTrailRequest
+func NewTrailFromRequest(req *CreateTrailRequest) *Trail {
+	return &Trail{
+		CreateTrailRequest: *req,
+		UID:                uuid.New(),
+		CreatedAt:          &time.Time{},
+	}
+}
+
+func NewTrail(name string, lat, lon float64, difficulty TrailDifficulty, lengthKm float64) *Trail {
+	return &Trail{
+		CreateTrailRequest: CreateTrailRequest{
+			Name:       &name,
+			Lat:        &lat,
+			Lon:        &lon,
+			Difficulty: &difficulty,
+			LengthKm:   &lengthKm,
+		},
+		UID:       uuid.New(),
+		CreatedAt: &time.Time{},
 	}
 }

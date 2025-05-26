@@ -10,7 +10,6 @@ import (
 	"github.com/dnakolan/trail-data-service/internal/models"
 	"github.com/dnakolan/trail-data-service/internal/services"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type TrailsHandler struct {
@@ -34,11 +33,8 @@ func (h *TrailsHandler) CreateTrailHandler(c *gin.Context) {
 	}
 
 	now := time.Now()
-	trail := &models.Trail{
-		UID:                uuid.New(),
-		CreateTrailRequest: req,
-		CreatedAt:          &now,
-	}
+	trail := models.NewTrailFromRequest(&req)
+	trail.CreatedAt = &now
 
 	if err := h.service.CreateTrail(c.Request.Context(), trail); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
