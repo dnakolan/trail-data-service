@@ -95,6 +95,9 @@ func (t *TrailFilter) Validate() error {
 }
 
 func (t *Trail) MatchesFilter(filter *TrailFilter) bool {
+	if filter == nil {
+		return true
+	}
 	if filter.Name != nil && *filter.Name != "" && *filter.Name != *t.Name {
 		return false
 	}
