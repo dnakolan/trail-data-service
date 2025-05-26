@@ -41,9 +41,9 @@ curl -X POST http://localhost:8080/trails \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Lamar River Trail",
-    "lat": 44.8472
-    "lon": -109.6278
-    "difficulty": "hard"
+    "lat": 44.8472,
+    "lon": -109.6278,
+    "difficulty": "hard",
     "length_km": 53
 }'
 ```
