@@ -12,6 +12,7 @@ type TrailStorage interface {
 	Save(ctx context.Context, trail *models.Trail) error
 	FindAll(ctx context.Context, filter *models.TrailFilter) ([]*models.Trail, error)
 	FindById(ctx context.Context, uid string) (*models.Trail, error)
+	Delete(ctx context.Context, uid string) error
 	Clear(ctx context.Context) error
 }
 
@@ -53,6 +54,13 @@ func (s *trailStorage) FindById(ctx context.Context, uid string) (*models.Trail,
 		return nil, errors.New("trail not found")
 	}
 	return trail, nil
+}
+
+func (s *trailStorage) Delete(ctx context.Context, uid string) error {
+	s.Lock()
+	defer s.Unlock()
+	delete(s.data, uid)
+	return nil
 }
 
 func (s *trailStorage) Clear(ctx context.Context) error {
