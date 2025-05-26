@@ -33,6 +33,10 @@ type CreateTrailRequest struct {
 	LengthKm   *float64         `json:"length_km"`
 }
 
+type TrailFilter struct {
+	CreateTrailRequest
+}
+
 func (t *Trail) Validate() error {
 	if t.Name == nil || *t.Name == "" {
 		return errors.New("trail name is required")
@@ -73,4 +77,34 @@ func (t *CreateTrailRequest) Validate() error {
 		LengthKm:   t.LengthKm,
 	}
 	return trail.Validate()
+}
+
+func (t *TrailFilter) Validate() error {
+	trail := &Trail{
+		Name:       t.Name,
+		LatStart:   t.LatStart,
+		LonStart:   t.LonStart,
+		Difficulty: t.Difficulty,
+		LengthKm:   t.LengthKm,
+	}
+	return trail.Validate()
+}
+
+func (t *Trail) MatchesFilter(filter *TrailFilter) bool {
+	if filter.Name != nil && *filter.Name != "" && *filter.Name != *t.Name {
+		return false
+	}
+	if filter.LatStart != nil && *filter.LatStart != *t.LatStart {
+		return false
+	}
+	if filter.LonStart != nil && *filter.LonStart != *t.LonStart {
+		return false
+	}
+	if filter.Difficulty != nil && *filter.Difficulty != *t.Difficulty {
+		return false
+	}
+	if filter.LengthKm != nil && *filter.LengthKm != *t.LengthKm {
+		return false
+	}
+	return true
 }
