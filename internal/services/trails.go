@@ -4,12 +4,9 @@ import (
 	"context"
 	"errors"
 
+	"github.com/dnakolan/trail-data-service/internal/config"
 	"github.com/dnakolan/trail-data-service/internal/models"
 	"github.com/dnakolan/trail-data-service/internal/storage"
-)
-
-const (
-	DUPLICATE_TRAIL_RADIUS_KM = 25.0
 )
 
 type TrailsService interface {
@@ -30,7 +27,7 @@ func NewTrailsService(storage storage.TrailStorage) *trailsService {
 }
 
 func (s *trailsService) CreateTrail(ctx context.Context, trail *models.Trail) error {
-	radiusKm := DUPLICATE_TRAIL_RADIUS_KM
+	radiusKm := config.DUPLICATE_TRAIL_RADIUS_KM
 	filter := &models.TrailFilter{
 		CreateTrailRequest: models.CreateTrailRequest{
 			Name: trail.Name,
