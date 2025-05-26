@@ -42,7 +42,7 @@ curl -X POST http://localhost:8080/trails \
   -d '{
     "name": "Lamar River Trail",
     "lat_start": 44.8472
-    "lng_start": -109.6278
+    "lon_start": -109.6278
     "difficulty": "Strenuous"
     "length_km": 53
 }'
