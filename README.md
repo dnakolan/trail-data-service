@@ -41,8 +41,8 @@ curl -X POST http://localhost:8080/trails \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Lamar River Trail",
-    "lat_start": 44.8472
-    "lon_start": -109.6278
+    "lat": 44.8472
+    "lon": -109.6278
     "difficulty": "hard"
     "length_km": 53
 }'
@@ -56,7 +56,7 @@ GET /trails - list all trails
 ```curl http://localhost:8080/trails```
 
 GET /trails/nearby?lat=X&lon=Y&radius-km=Z - proximity search
-```curl http:///trails/nearby?lat=44.8472&lng=-109.6278&radius-km=50```
+```curl http:///trails/nearby?lat=44.8472&lon=-109.6278&radius-km=50```
 
 # Design Considerations
 * Dependency Injection is used for loose coupling between components.
