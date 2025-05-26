@@ -2,8 +2,18 @@ package config
 
 import (
 	"os"
+	"time"
 
 	"gopkg.in/yaml.v3"
+)
+
+const (
+	SECRET_KEY            = "your-secret-key"
+	TOKEN_EXPIRATION_TIME = 1 * time.Hour
+	TOKEN_ISSUER          = "trail-data-service"
+	TOKEN_SUBJECT         = "user-auth"
+
+	DUPLICATE_TRAIL_RADIUS_KM = 25.0
 )
 
 var readFile = os.ReadFile
