@@ -31,8 +31,16 @@ trail-api/
 ```
 
 # Running the Service
-```go run ./cmd/server```
-TODO: Add command for starting the service in a container
+First run the included build.sh script to build the container images
+```
+./build.sh
+```
+
+Then start the application in docker with the following command
+```
+docker run -d -p 8080:8080 --name trail-service trail-data-service
+```
+
 
 # Example Usage (cURL)
 ## POST /trails - create trail
